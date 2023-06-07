@@ -1,0 +1,551 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{siunitx}
+\usepackage{hyperref,graphicx,booktabs,dcolumn}
+\usepackage{stata}
+\usepackage[x11names]{xcolor}
+\usepackage{natbib}
+\usepackage{chngcntr}
+\usepackage{pgfplotstable}
+\usepackage{pdflscape}
+\usepackage{multirow}
+\usepackage{booktabs}
+
+  
+\newcommand{\thedate}{\today}
+\counterwithin{figure}{section}
+\bibliographystyle{unsrt}
+\hypersetup{%
+    pdfborder = {0 0 0}
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \begin{flushright}
+        \Huge
+        \textbf{Use of secondary prevention medications in metropolitan and non-metropolitan areas: an analysis of 41,925  myocardial infarctions in Australia}
+\color{violet}
+\rule{16cm}{2mm} \\
+\Large
+\color{black}
+Protocol \\
+\thedate \\
+\color{blue}
+\url{https://github.com/cardiopharmnerd/medsremote} \\
+\color{black}
+       \vfill
+    \end{flushright}
+        \Large
+
+\noindent
+Adam Livori \\
+PhD Student \\
+\color{blue}
+\href{mailto:adam.livori1@Monash.edu}{adam.livori1@monash.edu} \\ 
+\color{black}
+\\
+Center for Medicine Use and Safety, Faculty of Pharmacy and Pharmaceutical Sciences, Monash University, Melbourne, Australia \\
+\\
+\end{titlepage}
+
+\pagebreak
+\tableofcontents
+\pagebreak
+\listoffigures
+\pagebreak
+
+\pagebreak
+\section{Preface}
+
+This is the protocol for the paper Use of secondary prevention medications in metropolitan and non-metropolitan areas: an analysis of 41,925 myocardial infarctions in Australia. \\
+This protocol details the data preparation (cleaning) that was undertaken from a linked dataset provided by the Victorian Department of Health as the source of Victorian Admitted Episodes Dataset data for this study, and the Centre for Victorian Data Linkage (Victorian Department of Health) for the provision of data linkage. This study was approved by the Human Research and Ethics Committees from the Australian Institute for Health and Welfare (AIHW) (EO2018/4/468) and Monash University (14339). \\
+To generate this document, the Stata package texdoc was used, which is available from: \color{blue} \url{http://repec.sowi.unibe.ch/stata/texdoc/} \color{black} (accessed 14 November 2022). The final Stata do file and this pdf are available \color{blue} \href{https://github.com/jimb0w/BA}{here} \color{black}. The do file was originally coded and then exported from the Secure Unified Research Environment (SURE), and so the histograms generated were exported separately and then imported via LaTex coding due to constraints on exporting raw data from SURE. Therefore, when reproducing the code, use the do file rather than copying from the LaTex document. 
+
+\section{Abbreviations} 
+
+\begin{itemize}
+\item A: Accessible (ARIA cateogry with values from 1.85 to 3.50)
+\item ABS: Australian Bureau of Statistics
+\item ACEi: Angiotensin converting enzyme inhibitor
+\item AF: Atrial fibrillation
+\item AFL: Atrial flutter
+\item AIHW: Australian Institute of Health and Welfare
+\item AMU: Acute medical unit
+\item ARB: Angiotensin II receptor blocker
+\item ARIA: Accessability/remoteness index of Australia
+\item ATC: Anatomical Therapeutic Chemical 
+\item CA: Cancer
+\item CABG: Coronary Artery Bypass Graft
+\item CCU: Coronary care unit
+\item CPD: Chronic pulmonary disease
+\item DM: Diabetes melitus
+\item HA: Highly accessible (ARIA cateogry with values from 0.00 to 1.84)
+\item HF: Heart failure
+\item HS: Haemorrhagic stroke
+\item HT: Hypertension
+\item ICD: International classification of disease (ICD-10 Australian Modified codes were present in this dataset)
+\item IRSD: Index of relative socio-economic disadvantage
+\item IS: Ischaemic stroke
+\item MA: Moderately acceessible (ARIA cateogry with values from 3.51 to 5.80)
+\item MBS: Medicare benefits scheme
+\item MI: Myocardial infarction
+\item NDI: National Death Index
+\item NSTEMI: Non-ST elevation myocardial infarction
+\item P2Y12i: Adenosine diphosphate receptor (P2Y12) inhibitor
+\item PBS: Pharmaceutical Benefits Scheme
+\item PCI: Perceutaneous Coronary Intervention
+\item PDC: Proportion of days covered
+\item PVD: Peripheral vascular disease
+\item SLA: Statistical local area
+\item STEMI: ST elevation myocardial infarction
+\item US: Unknown stroke
+\item VAED: Victorian admitted episode dataset
+\item WHO: World Health Organisation
+\end{itemize}
+
+\pagebreak
+
+\section{Introduction}
+
+Advances in access to catheter laboratories, techniques, and stent technology, have all contributed to increased survival following MI \cite{chew2016}. However, while this has translated into lower short-term mortality, the improved outcomes around the time of MI has led to an increase in the requirement for secondary prevention. Medications remain the mainstay of treatment for secondary prevention of subsequent MI. Randomised Control Trials (RCT) have demonstrated that there are a number of medications that reduce major adverse cardiovascular events (MACE) in MI: dual anti-antiplatelet therapy, which includes aspirin and a P2Y12 inhibitor (clopidogrel, prasugrel, or ticagrelor); angiotensin converting enzyme inhibitors/angiotensin receptor blockers (ACEI/ARB), HMG Co-A reductase inhibitors (statins); and beta blockers \cite{chew2016}. \\
+The utilisation of secondary prevention medications should not differ based on the location of an indivudal, yet we have seen in previous studies that remoteness can impact clinical outcomes following MI. This study posed the question as to whether secondary prevention medication dispensed and adherence may have a role to play in addressing this potential disparity in clinical outcomes. \\
+The following protocol lists the steps were taken to create and analyse a cohort of MI admissions between 1/7/2012 and 30/6/2017 using a linked dataset from the VAED, PBS, MBS and NDI. 
+
+\pagebreak
+
+\section{MI cohort dataset creation}
+\subsection{Initial data import}
+We will generate a tag (MI Primary) that identifies those admissions with MI, check that this code correctly identifies these admissions, and then remove all other admissions. This yielded 101,850 admissions where an MI occurred at somepoint throughout the dataset time period. 
+\color{violet} 	
+\begin{stlog}\input{log/1.log.tex}\end{stlog}
+\color{black}
+\begin{figure} [h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{HIST MIadmissionsALL.pdf}
+	\caption{Histogram of all MI admissions from VAED dataset}
+	\label{All_MI_admissions}
+\end{figure}
+
+\subsection{Removal of nested admissions}
+\color{violet}
+\begin{stlog}\input{log/2.log.tex}\end{stlog}
+\color{black}
+As expected within this cohort, the majority of discharges are to home (68\%) or transfered to another hospital (26\%). In order to remove the nested admissions, such as patients going to dialysis or from CCU to AMU, we need to combine (comb) different separations to create broader categories which we can then drop follwoing extraction of relevant data. This ensures we keep the correct number of MIs (removal of nested admissions) but do not lose any data from within those admissions (comorbidities and procedure codes for example)
+
+\begin{itemize}
+\item A	Separation and transfer to mental health residential facility
+\item B	Separation and transfer to Transition Care bed based program
+\item D	Death
+\item E	Change to Interim Care
+\item F	Change to Interim Care - Nursing Home type
+\item G	Posthumous Organ Procurement
+\item H	Separation to private residence/accommodation
+\item K	Other formal separation
+\item M	Dis to home with ref to CRC arranged
+\item N	Separation and transfer to aged care residential facility
+\item O	Other change in care type not BPX or F
+\item P	Dis to home w Post Acute Care arranged
+\item R	Separation and Transfer to Restorative Care Bed-Based Program
+\item S	Statistical Separation
+\item T	Separation and transfer to acute hospital/extended care
+\item U	Dis to home w District Nursing arranged
+\item V	Transfer to oth hospital in Region
+\item X	Change from oth care type to NHT care
+\item Z	Left against medical advice
+\end{itemize}
+
+For our puposes, we will use the following
+\begin{itemize}
+\item Sepmode \= 1 means a statistical discharge or transfer to other acute site
+\item Sepmode \= 2 means not a statistical discharge
+\item Sepmode \= 3 means death 
+\end{itemize}
+
+The following code generates a variable if the admission possessed a primary diagnosis of MI (MI primary) and if the admission occurred prior to a separation or if no separation exists for the admission. We can then change the MI primary value to 1 should an MI occur in a nested admission.
+
+
+\color{violet}
+\begin{stlog}\input{log/3.log.tex}\end{stlog}
+\color{black}
+The next step replaces the admdate in the row with the actual date of MI admission should it occur in a nested admission of an episode of care. This alters the actual admission date, but becuase we are focussing on MI admissions, it is okay for this to be replaced, as it will not change the admission date. \\
+We then duplicated the process but for the separation (discharge) date. It is also important to ensure the sepdate is updated should the separation date of the nexted admission be later than the original sepdate
+\color{violet}
+\begin{stlog}\input{log/4.log.tex}\end{stlog}
+\color{black}
+The last step is to replace the mode of separation (type of discharge). As before, we first create a new variable that will be a copy of the sepmode if a nested admission occurred. Now that a copy variable of sepmode exists, we want to replace the sepmode providing the nested separation date is after the original separation and that the admission possessed an MI (from when we recoded them previously)
+\color{violet}
+\begin{stlog}\input{log/5.log.tex}\end{stlog}
+color{black}
+This recode step ensures that statistical separations and transfers are recoded to actual non-death separations if this was the final outcome. The last step ensures if death occurred at any point throughout the separation, that the outcome is noted to be death. 
+\color{violet}
+\begin{stlog}\input{log/6.log.tex}\end{stlog}
+\color{black}
+\begin{figure} 
+	\centering
+	\includegraphics[width=0.5\textwidth]{HIST MIadmissionsNONEST.pdf}
+	\caption{Histogram of all MI admissions from VAED dataset following removal of nested admissions}
+	\label{MI admissions NONEST}
+\end{figure}
+\color{violet}
+\color{black}
+\subsection{Removal of same-day admissions}
+\color{violet}
+\begin{stlog}\input{log/7.log.tex}\end{stlog}
+\color{black}
+\subsection{Removal of transfers as separations}
+We specifed that a transfer is likely to occur when the separation for transfer or statistical discharge (sepmode =1) occurs within 5 days. 
+\color{violet}
+\begin{stlog}\input{log/8.log.tex}\end{stlog}
+\color{black}
+The following loop searches through all admissions marked as transfer (from the prior transfer identification code) and replaces the D2S count variable with total consecutive coutned admissions that occur within 5 days of the previous separation. The second stage replaces the value of D2S with the maximum count of separations that occur within what has been definied as an index MI admission (five day rule between transfers). \\
+We only keep discrete MI admissions by keeping the index admission where an MI occurred (this will still contain the total admission period due to the code generated prior to this step. 
+\color{violet}
+\begin{stlog}\input{log/9.log.tex}\end{stlog}
+\color{black}
+\subsection{National death index cleaning and merge}
+Using the dataset that is free of nested admissions and same-day admissions, we can generate a tag to note if the person had been admitted for MI previously. Because transfers have also been accounted for, we can recode the transfers and statistical admissions (sepmode=1) as discharges.
+\color{violet}
+\begin{stlog}\input{log/10.log.tex}\end{stlog}
+\color{black}
+We now merged in the NDI data set, dropping deaths that are not part of the MI cohort or deaths that occurred before the admission date. \\
+We also created a dataset for use in clinical outcome assessments, however these outcomes were not part of this specific study. 
+\color{violet}
+\begin{stlog}\input{log/11.log.tex}\end{stlog}
+\color{black}
+Of note, individuals who are under the age of 30 are not included within the dataset, irrespective if they had an MI during the dataset time period. However, if the indivudal has a subsequent cardiac event during the dataset time period and are now over the ago 30, they are included. As such, any individuals under the age of 30 needed to be removed in order to prevent incomplete data being subject to analysis. 
+\color{violet}
+\begin{stlog}\input{log/12.log.tex}\end{stlog}
+\color{black}
+\begin{figure} [h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{HIST MIadmissionsPOSTTF.pdf}
+	\caption{Histogram of MI admissions from VAED dataset following removal of nested admissions and transfers}
+	\label{MI admissions POSTTF}
+\end{figure}
+\color{violet}
+\begin{stlog}\input{log/13.log.tex}\end{stlog}
+\color{black}
+\begin{figure} 
+	\centering
+	\includegraphics[width=0.5\textwidth]{HIST MIadmissionsLOS.pdf}
+	\caption{Histogram of length of stay for MI admissions (with outlying admissions greater than 100 days filtered out)}
+	\label{MI admissions LOS}
+\end{figure}
+\color{violet}
+\begin{stlog}\input{log/14.log.tex}\end{stlog}
+\color{black}
+\subsection{Comorbidity assignment}
+The use of assigning comorbidities were used both to describe the study cohort, but also for creation of co-variates to be used in the regression modelling. 
+This step involved splitting the cohort into a series of datasets so that each individual only has one attrituble MI within each dataset (leanMI). We then merged in the dataset that contains all admissions and ICD diagnosis codes. We ran the merged set (matches only) through a loop to tag the presence of the following comorbidities via the presence of ICD codes:
+\begin{itemize}
+\item AF: Atrial fibrillation
+\item AFL: Atrial flutter
+\item ARB: Angiotensin II receptor blocker
+\item CA: Cancer
+\item CPD: Chronic pulmonary disease
+\item DM: Diabetes melitus
+\item HF: Heart failure
+\item HS: Haemmoraghic stroke
+\item HT: Hypertension
+\item IS: Ischaemic stroke
+\item MI: Myocardial infarction
+\item NSTEMI: Non-ST elevation myocardial infarction
+\item PVD: Peripheral vascular disease
+\item STEMI: ST elevation myocardial infarction
+\item US: Unknown stroke
+\end{itemize}
+
+Given the majority of strokes are ischaemic, we combined unknown strokes into the ischaemic stroke set as well. 
+\color{violet}
+\begin{stlog}\input{log/15.log.tex}\end{stlog}
+\color{black}
+\subsection{Treatment outcomes}
+Treatments of interest included PCI and CABG, which will both be used as an adjustment variables in the regression analysis and for description of the cohort in terms of revascularisation recevied within 30 days of the index MI. 
+\color{violet}
+\begin{stlog}\input{log/16.log.tex}\end{stlog}
+\color{black}
+\begin{figure} [h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{HIST MIadmissionsCABGs.pdf}
+	\caption{Histogram of CABG performed within 30 days of index MI admission}
+	\label{CABGs}
+\end{figure}
+\color{violet}
+\begin{stlog}\input{log/17.log.tex}\end{stlog}
+\color{black}
+\begin{figure} [h]
+	\centering 
+	\includegraphics[width=0.5\textwidth]{HIST MIadmissionsPCIs.pdf}
+	\caption{Histogram of PCI performed within 30 days of index MI admission}
+	\label{PCIs}
+\end{figure}
+\color{violet}
+\begin{stlog}\input{log/18.log.tex}\end{stlog}
+\color{black}
+\subsection{Linking statistical local area (SLA) with remoteness (ARIA)}
+A dataset was sourced from the AIHW (Catalogue number PHE 53) and converted from a PDF to csv file. This file lists SLA codes present in the MI cohort and allows matching with the mean ARIA values for regression analysis and attributing the broad ARIA categories for descriptive statistics. 
+\color{violet}
+\begin{stlog}\input{log/19.log.tex}\end{stlog}
+\color{black}
+There were 4027 MIs not matched, equating to a loss of data of ~9%. After reviewing the source data document, it looks like these sla's came into existence after the report. We then dropped non-Victorians from the dataset (1750 MIs) as well as those with no matching ARIA code due to either no SLA code provided or no corresponding location noted (2601 MIs). 
+\color{violet}
+\begin{stlog}\input{log/20.log.tex}\end{stlog}
+\color{black}
+\subsection{Removal of admissions with in-hopsital and 90-day mortality}
+\color{violet}
+\begin{stlog}\input{log/21.log.tex}\end{stlog}
+\color{black}
+\begin{figure} [h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{HIST daysuntildeath.pdf}
+	\caption{Histogram of days until death from cohort where mortality occurred between index MI admission and end of follow up (30/6/2018)}
+	\label{daysuntildeath}
+\end{figure}
+
+\section{Medication dataset creation}
+\subsection{PBS data preparation- antiplatelets}
+This step involved taking all medications within the ATC 1st level code "B" that includes antithrombotic agents such as P2Y12 inhibitors and aspirin. We reformatted the dates so they could be used for data cleaning, and removed all observations that occurred outside the study period and observations that were not of the target drugs: aspirin, clopidogrel, ticagrelor or prasugrel. We also needed to use a PBS code for identification of a combination product containing clopidogerl and aspirin, which was nested under clopidogrel.\\
+This dataset was then saved so it could be merged into the MI cohort for medication use analysis. 
+\color{violet}
+\begin{stlog}\input{log/22.log.tex}\end{stlog}
+\color{black}
+\subsection{PBS data preparation- non antiplatelet secondary prevention medications}
+The same process as before was undertaken, but this time using dispensing data from the cardiovascular ATC 1st level code "C". Drug classes included all beta blockers, ACEi, ARB, and statins. Combination products containing these ingredidents were also included under their respective classes. A secondary check was then performed to ensure no drugs were classified twice.
+\color{violet}
+\begin{stlog}\input{log/23.log.tex}\end{stlog}
+\color{black}
+\subsection{PBS data merge with MI cohort}
+We adopted a similar approach to the co-morbidity dataset creation by separating out the 'lean MIs' and merging each of the 16 datasets with the PBS data, matching for the patient identifier (ppn). This process was done for both PBS sets B and C, and then appended to create one dataset containing all PBS dispensings of secondary prevention medications that were dispensed a year prior to admission and the year following discharge for the total MI cohort. 
+\color{violet}
+\begin{stlog}\input{log/24.log.tex}\end{stlog}
+\color{black}
+Following creation of this dataset, we removed any observations relating to MI admissions prior to 1/7/2012 and after 30/6/2017, and created a number of tags to allow identification of medication dispensing and class. Tags were created if a supply occurred within 90 days of discharge and for 30 days prior to admission. 
+\color{violet}
+\begin{stlog}\input{log/25.log.tex}\end{stlog}
+\color{black}
+\subsection{People alive at 90 days post discharge}
+Because we have now have a dataset containing mortality status from the NDI and medication information from the PBS, we are able to identify those who received drugs but died during admission or within 90 days of discharge. This dataset will be needed for the PDC calculations. 
+\color{violet}
+\begin{stlog}\input{log/26.log.tex}\end{stlog}
+\color{black}
+\subsection{Packsize information from the PBS data}
+We performed a webscrape of the PBS data from the \color{blue} \href{https://www.pbs.gov.au/browse/downloads}{PBS website} \color{black}. This allowed review of potential packsize changes across the study period and to account for it should it occur. Due to slight changes in formatting of archived data, the coding changed for groups of different time periods as shown below. Once all files were extracted, they were tagged for year and month and then appended into one reference file. 
+\color{violet}
+\begin{stlog}\input{log/27.log.tex}\end{stlog}
+\color{black}
+There were no changes in packsize across medications based on their respective itemcodes, so a new reference set with only one observation per itemcode and packsize was created.
+\color{violet}
+\begin{stlog}\input{log/28.log.tex}\end{stlog}
+\color{black}
+\subsection{Separate dataset into drug classes for PDC calculation}
+Using the dataset for people alive at 90 days post MI, we split the dataset into 8 sets, once for each class (1-7) and combination of ACEi and ARB (8). The datasets will be used for PDC calculations so that drugs are analysed for PDC in their respective class. This also allowed for analysis of drug dispensing within 90 days for each medication class. As aspirin is primiarly purchased as an over the counter item rathern through the PBS, this dataset was not analysed. \\
+We were also able to use this dataset and merge it with the MI cohort to identify how many people received none, one, two, three, or four classes of medications within 90 days of discharge.
+\color{violet}
+\begin{stlog}\input{log/29.log.tex}\end{stlog}
+\color{black}
+\subsection{Preadmission use of medications}
+In order to describe medication use prior to MI admission, a dataset was created that shows the proportion of MI admissions that received sceondary prevention medications (by class) in the 90 days prior to admission
+\color{violet}
+\begin{stlog}\input{log/30.log.tex}\end{stlog}
+\color{black}
+\subsection{PDC calculation method}
+A five step process was undertaken to determine both the PDC values according to a 365 day observation window following discharge. This method was adapted from previous reported methods from a Stata module design \cite{pdcstata2019}. 
+
+\begin{itemize}
+\item Step 1: The data was reshaped into wide form, and days covered by the supply generated according to the defined daily dose from WHO or via the corrected method used for beta blockers.
+\item Step 2:End dates for follow up were created, with date of death replacing the end of follow up date if the indivudal died sooner than 365 days following discharge. 
+\item Step 3: Adjustments were made to supply dates if there was overlap from the previous supply and the next supply based on the number of days covered by the respective pack size.  
+\item Step 4: Values for the 365 days of follow up were created and using the adjusted supply dates, it could be determined whether the individual had access to the medication or not. We then adjusted days covered should supply continue beyond the recorded day of death. 
+\item Step 5: PDC was caluclated using both a 365 window as well as the adjusted window of 365 post discharge or days until death, which came first. 
+
+\end{itemize}
+
+\subsubsection{PDC calculation- statins}
+
+\color{violet}
+\begin{stlog}\input{log/31.log.tex}\end{stlog}
+\color{black}
+\subsubsection{PDC calculation- anti-platelets}
+\color{violet}
+\begin{stlog}\input{log/32.log.tex}\end{stlog}
+\color{black}
+\subsubsection{PDC calculation- ACEi}
+\color{violet}
+\begin{stlog}\input{log/33.log.tex}\end{stlog}
+\color{black}
+\subsubsection{PDC calculation- ARB}
+\color{violet}
+\begin{stlog}\input{log/34.log.tex}\end{stlog}
+\color{black}
+\subsubsection{PDC calculation- ACEi or ARB}
+Both datasets for ACEI and ARB were appended and then collapsed with respect to MI admission, with double ups removed and assuming the patient stopped one treatment and commenced the new treatment, similar to how it was assumed with drugs within the same classes for the other datasets. 
+\color{violet}
+\begin{stlog}\input{log/35.log.tex}\end{stlog}
+\color{black}
+\subsubsection{PDC calculation- Beta blockers} \label{PDC calculation- Beta blockers}
+Due to variance in defined daily dosing regimens within the beta blocker group, the 75\% rule was incorporated \cite{pdc2021}. This involved taking the 75th percentile of refill times to determine days supply per PBS item number. This value was then applied across all beta blocker drugs defined by ATC code. 
+\color{violet}
+\begin{stlog}\input{log/36.log.tex}\end{stlog}
+\color{black}
+\subsection{Linking postcode with SEIFA}
+A combination of the PBS and MBS datasets were used to determine the postcode of the indivudal which is needed to match to socioeconomic disadvantage using a reference dataset of postcodes and IRSD scores. \\
+We first looked the MBS set which lists dates of service events and the postcode recorded by MBS at the time of the event. We merged this with the cohort to find the most recent service event that occurred prior to the MI. 
+\color{violet}
+\begin{stlog}\input{log/37.log.tex}\end{stlog}
+\color{black}
+As there were 3,006 MI admissions without a service event preceeding the MI, the same process was applied but looking at service events that occured after the MI. The most recent service event's associated postcode was selected in the event of multiple events occuring following the MI. 
+\color{violet}
+\begin{stlog}\input{log/38.log.tex}\end{stlog}
+\color{black}
+This still left 2,477 MI admissions from the cohort without a postcode avaiable for matching with IRSD scores. The PBS dataset also contains postcode information, and so the same process was applied but using the PBS dispensing date closest to the index MI admission. 
+\color{violet}
+\begin{stlog}\input{log/39.log.tex}\end{stlog}
+\color{black}
+This left 2093 MI admissions without a postcode, and after merging with the MI cohort for analysis, only 59 MI admissions were left without a postcode and therefore could not be assigned an IRSD score. \\
+The next step involved merging the postcode data with the reference dataset. 
+\color{violet}
+\begin{stlog}\input{log/40.log.tex}\end{stlog}
+\color{black}
+As there were 59 MI admissions without IRSD scores, this set were assigned the mean IRSD score from the rest of the cohort. 
+\color{violet}
+\begin{stlog}\input{log/41.log.tex}\end{stlog}
+\color{black}
+\section{Analysis}
+\subsection{Creation of analysis data set}
+Each of the separate datasets throughout MI cohort creation, remoteness score allocation, comorbidity allocation, treatment outcome allocation, medication dispensing, medication adherence, and socioeconomic disadvtage score allocation were merged into one dataset. \\
+In order to ensure there were dispensing and PDC scores for MI admissions where there were no PBS data were defined to have not receieved therapy and not adherent to therapy. These admissions replaced blank values following the merge with 0 values to ensure they could be anlysed in the regression model. \\
+Lastly, MIs where no ARIA scores were available were dropped from the analysis dataset. 
+\color{violet}
+\begin{stlog}\input{log/42.log.tex}\end{stlog}
+\color{black}
+\subsection{Result tables}
+\subsubsection{Tables of total population characteristics}
+This first table uses the total MI cohort within Victoria, and so it includes admissions where people died during admission or within 90 days of discharge. This table lists total population characteristics, as well as characteristics by STEMI or NSTEMI, as well as characteristics uses categories of remoteness (HA, A, MA). 
+\color{violet}
+\begin{stlog}\input{log/43.log.tex}\end{stlog}
+\color{black}
+\subsubsection{Tables of analysed population characteristics}
+This table includes the total analysed cohort, which excludes non-victorians and those who died during admission or within 90 days of discharge. There are two different tables, with the first showing characteristics by NSTEMI/STEMI diagnosis and remoteness category, and the second table by remoteness cateogory only, but with a breakdown of NSTEMI/STEMI within the categories. 
+\color{violet}
+\begin{stlog}\input{log/44.log.tex}\end{stlog}
+\color{black}
+\subsection{Data analysis}
+\subsection{Regression analysis for dispensing using means for NSTEMI and STEMI cohorts for prediction (splines and full adjusted model)}
+We first modified age categoires to enable us to create splines of age, then generated mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI. These were selected from eac of the separate NSTEMI and STEMI stratified cohorts. Following this step, we created a dataset where these values where present for each ARIA value, including splines of ARIA values and age.\\
+We selected a logistic regression model for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
+\color{violet}
+\begin{stlog}\input{log/45.log.tex}\end{stlog}
+\color{black}
+Using the model above, we predcited probabilities of dispensing for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
+\begin{itemize}
+\item Mean age 70.93
+\item Sex 1.36 [male = 1 female = 2]
+\item IRSD score 997.87
+\item Presence of hypertension 0.65 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.17 (binary)
+\item Presence of diabetes 0.32 (binary)
+\item Presence of ischaemic stroke 0.11 (binary)
+\item received PCI within 30 days of admission 0.33 (binary)
+\item Received CABG within 30 days of admission (0.11)
+\end{itemize}
+
+Using the model above, we predcited probabilities of dispensing for STEMI with the following mean values derived from the STEMI stratified cohort: \\
+\begin{itemize}
+\item Mean age 64.24
+\item Sex 1.25 [male = 1 female = 2]
+\item IRSD score 999.77
+\item Presence of hypertension 0.54 (binary)
+\item Presence of AF 0.12 (binary)
+\item Presence of heart failure 0.14 (binary)
+\item Presence of diabetes 0.22 (binary)
+\item Presence of ischaemic stroke 0.08 (binary)
+\item received PCI within 30 days of admission 0.75 (binary)
+\item Received CABG within 30 days of admission 0.08 (binary)
+\end{itemize}
+\color{violet}
+\begin{stlog}\input{log/46.log.tex}\end{stlog}
+\color{black}
+\subsection{Regression analysis for dispensing using means for total cohort for prediction (splines and full adjusted model)}
+This step replicated the method above, however we took the means of of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort and applied it STEMI and NSTEMI respectively. This is presented in the supplement of the manuscript as a secondary analysis. 
+\color{violet}
+\begin{stlog}\input{log/47.log.tex}\end{stlog}
+\color{black}
+Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
+\begin{itemize}
+\item Mean age 69.20
+\item Sex 1.33 [male = 1 female = 2]
+\item IRSD score 998.36
+\item Presence of hypertension 0.62 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.16 (binary)
+\item Presence of diabetes 0.30 (binary)
+\item Presence of ischaemic stroke 0.10 (binary)
+\item received PCI within 30 days of admission 0.44 (binary)
+\item Received CABG within 30 days of admission (0.10)
+\end{itemize}
+\color{violet}
+\begin{stlog}\input{log/48.log.tex}\end{stlog}
+\color{black}
+\subsection{Regression analysis for PDC using means for NSTEMI and STIME cohorts for prediction (splines and fully adjusted model only)}
+We used the same method for dispensing in terms of splines of ARIA and age, as well as mean values of of sex, IRSD, HT, AF, HF, DM, CABG and PCI. We ran the analysis twice like in the dispensing analysis, one with mean values bvased on NSTEMI and STEMI straitifed cohorts, and the other using mean values from the total analysed cohort. \\
+We selected a fractional logistic regression model with a logit link function for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
+\color{violet}
+\begin{stlog}\input{log/49.log.tex}\end{stlog}
+\color{black}
+Using the model above, we predcited PDC for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
+\begin{itemize}
+\item Mean age 70.93
+\item Sex 1.36 [male = 1 female = 2]
+\item IRSD score 997.87
+\item Presence of hypertension 0.65 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.17 (binary)
+\item Presence of diabetes 0.32 (binary)
+\item Presence of ischaemic stroke 0.11 (binary)
+\item received PCI within 30 days of admission 0.33 (binary)
+\item Received CABG within 30 days of admission (0.11)
+\end{itemize}
+
+Using the model above, we predcited PDC for STEMI with the following mean values derived from the STEMI stratified cohort: \\
+\begin{itemize}
+\item Mean age 64.24
+\item Sex 1.25 [male = 1 female = 2]
+\item IRSD score 999.77
+\item Presence of hypertension 0.54 (binary)
+\item Presence of AF 0.12 (binary)
+\item Presence of heart failure 0.14 (binary)
+\item Presence of diabetes 0.22 (binary)
+\item Presence of ischaemic stroke 0.08 (binary)
+\item received PCI within 30 days of admission 0.75 (binary)
+\item Received CABG within 30 days of admission 0.08 (binary)
+\end{itemize}
+\color{violet}
+\begin{stlog}\input{log/50.log.tex}\end{stlog}
+\color{black}
+\subsection{Regression analysis for PDC using means for total analysed population for prediction (splines and fully adjusted model only)}
+This analysis was the same as above, but like with the dispensing analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. 
+\color{violet}
+\begin{stlog}\input{log/51.log.tex}\end{stlog}
+\color{black}
+Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
+\begin{itemize}
+\item Mean age 69.20
+\item Sex 1.33 [male = 1 female = 2]
+\item IRSD score 998.36
+\item Presence of hypertension 0.62 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.16 (binary)
+\item Presence of diabetes 0.30 (binary)
+\item Presence of ischaemic stroke 0.10 (binary)
+\item received PCI within 30 days of admission 0.44 (binary)
+\item Received CABG within 30 days of admission (0.10)
+\end{itemize}
+\color{violet}
+\begin{stlog}\input{log/52.log.tex}\end{stlog}
+\clearpage
+\color{black}
+\bibliography{C:/Users/acliv1/Documents/library.bib}
+\end{document}
+
