@@ -2771,7 +2771,7 @@ texdoc stlog close
 /***
 \color{black}
 \subsection{Data analysis}
-\subsection{Regression analysis for dispensing using means for NSTEMI and STEMI cohorts for prediction (splines and full adjusted model)}
+\subsubsection{Regression analysis for dispensing using means for NSTEMI and STEMI cohorts for prediction (splines and full adjusted model)}
 We first modified age categoires to enable us to create splines of age, then generated mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI. These were selected from eac of the separate NSTEMI and STEMI stratified cohorts. Following this step, we created a dataset where these values where present for each ARIA value, including splines of ARIA values and age.\\
 We selected a logistic regression model for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
 \color{violet}
@@ -2927,7 +2927,7 @@ texdoc stlog close
 
 /***
 \color{black}
-\subsection{Regression analysis for dispensing using means for total cohort for prediction (splines and full adjusted model)}
+\subsubsection{Regression analysis for dispensing using means for total cohort for prediction (splines and full adjusted model)}
 This step replicated the method above, however we took the means of of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort and applied it STEMI and NSTEMI respectively. This is presented in the supplement of the manuscript as a secondary analysis. 
 \color{violet}
 ***/
@@ -3041,7 +3041,7 @@ texdoc stlog close
 
 /***
 \color{black}
-\subsection{Regression analysis for PDC using means for NSTEMI and STIME cohorts for prediction (splines and fully adjusted model only)}
+\subsubsection{Regression analysis for PDC using means for NSTEMI and STIME cohorts for prediction (splines and fully adjusted model only)}
 We used the same method for dispensing in terms of splines of ARIA and age, as well as mean values of of sex, IRSD, HT, AF, HF, DM, CABG and PCI. We ran the analysis twice like in the dispensing analysis, one with mean values bvased on NSTEMI and STEMI straitifed cohorts, and the other using mean values from the total analysed cohort. \\
 We selected a fractional logistic regression model with a logit link function for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
 \color{violet}
@@ -3166,7 +3166,7 @@ texdoc stlog close
 
 /***
 \color{black}
-\subsection{Regression analysis for PDC using means for total analysed population for prediction (splines and fully adjusted model only)}
+\subsubsection{Regression analysis for PDC using means for total analysed population for prediction (splines and fully adjusted model only)}
 This analysis was the same as above, but like with the dispensing analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. 
 \color{violet}
 ***/
