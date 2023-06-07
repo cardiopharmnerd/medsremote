@@ -112,8 +112,8 @@ To generate this document, the Stata package texdoc was used, which is available
 
 \section{Introduction}
 
-Advances in access to catheter laboratories, techniques, and stent technology, have all contributed to increased survival following MI. However, while this has translated into lower short-term mortality, the improved outcomes around the time of MI has led to an increase in the requirement for secondary prevention. Medications remain the mainstay of treatment for secondary prevention of subsequent MI. Randomised Control Trials (RCT) have demonstrated that there are a number of medications that reduce major adverse cardiovascular events (MACE) in MI: dual anti-antiplatelet therapy, which includes aspirin and a P2Y12 inhibitor (clopidogrel, prasugrel, or ticagrelor); angiotensin converting enzyme inhibitors/angiotensin receptor blockers (ACEI/ARB), HMG Co-A reductase inhibitors (statins); and beta blockers. \\
-The utilisation of secondary prevention medications should not differ based on the location of an indivudal, yet we have seen in previous studies that remoteness can impact clinical outcomes following MI. This study posed the question as to whether secondary prevention medication receipt and adherence may have a role to play in addressing this potential disparity in clinical outcomes. \\
+Advances in access to catheter laboratories, techniques, and stent technology, have all contributed to increased survival following MI \cite{chew2016}. However, while this has translated into lower short-term mortality, the improved outcomes around the time of MI has led to an increase in the requirement for secondary prevention. Medications remain the mainstay of treatment for secondary prevention of subsequent MI. Randomised Control Trials (RCT) have demonstrated that there are a number of medications that reduce major adverse cardiovascular events (MACE) in MI: dual anti-antiplatelet therapy, which includes aspirin and a P2Y12 inhibitor (clopidogrel, prasugrel, or ticagrelor); angiotensin converting enzyme inhibitors/angiotensin receptor blockers (ACEI/ARB), HMG Co-A reductase inhibitors (statins); and beta blockers \cite{chew2016}. \\
+The utilisation of secondary prevention medications should not differ based on the location of an indivudal, yet we have seen in previous studies that remoteness can impact clinical outcomes following MI. This study posed the question as to whether secondary prevention medication dispensed and adherence may have a role to play in addressing this potential disparity in clinical outcomes. \\
 The following protocol lists the steps were taken to create and analyse a cohort of MI admissions between 1/7/2012 and 30/6/2017 using a linked dataset from the VAED, PBS, MBS and NDI. 
 
 \pagebreak
@@ -863,7 +863,7 @@ texdoc stlog close
 
 /***
 \color{black}
-Following creation of this dataset, we removed any observations relating to MI admissions prior to 1/7/2012 and after 30/6/2017, and created a number of tags to allow identification of medication receipt and class. Tags were created if a supply occurred within 90 days of discharge and for 30 days prior to admission. 
+Following creation of this dataset, we removed any observations relating to MI admissions prior to 1/7/2012 and after 30/6/2017, and created a number of tags to allow identification of medication dispensing and class. Tags were created if a supply occurred within 90 days of discharge and for 30 days prior to admission. 
 \color{violet}
 ***/
 
@@ -1242,7 +1242,7 @@ texdoc stlog close
 /***
 \color{black}
 \subsection{Separate dataset into drug classes for PDC calculation}
-Using the dataset for people alive at 90 days post MI, we split the dataset into 8 sets, once for each class (1-7) and combination of ACEi and ARB (8). The datasets will be used for PDC calculations so that drugs are analysed for PDC in their respective class. This also allowed for analysis of drug receipt within 90 days for each medication class. As aspirin is primiarly purchased as an over the counter item rathern through the PBS, this dataset was not analysed. \\
+Using the dataset for people alive at 90 days post MI, we split the dataset into 8 sets, once for each class (1-7) and combination of ACEi and ARB (8). The datasets will be used for PDC calculations so that drugs are analysed for PDC in their respective class. This also allowed for analysis of drug dispensing within 90 days for each medication class. As aspirin is primiarly purchased as an over the counter item rathern through the PBS, this dataset was not analysed. \\
 We were also able to use this dataset and merge it with the MI cohort to identify how many people received none, one, two, three, or four classes of medications within 90 days of discharge.
 \color{violet}
 ***/
@@ -1335,7 +1335,7 @@ texdoc stlog close
 /***
 \color{black}
 \subsection{PDC calculation method}
-A five step process was undertaken to determine both the PDC values according to a 365 day observation window following discharge. 
+A five step process was undertaken to determine both the PDC values according to a 365 day observation window following discharge. This method was adapted from previous reported methods from a Stata module design \cite{pdcstata2019}. 
 
 \begin{itemize}
 \item Step 1: The data was reshaped into wide form, and days covered by the supply generated according to the defined daily dose from WHO or via the corrected method used for beta blockers.
@@ -1645,8 +1645,7 @@ texdoc stlog close
 /***
 \color{black}
 \subsubsection{PDC calculation- Beta blockers} \label{PDC calculation- Beta blockers}
-
-Due to variance in defined daily dosing regimens within the beta blocker group, the 75\% rule was incorporated. This involved taking the 75th percentile of refill times to determine days supply per PBS item number. This value was then applied across all beta blocker drugs defined by ATC code. 
+Due to variance in defined daily dosing regimens within the beta blocker group, the 75\% rule was incorporated \cite{pdc2021}. This involved taking the 75th percentile of refill times to determine days supply per PBS item number. This value was then applied across all beta blocker drugs defined by ATC code. 
 \color{violet}
 ***/
 
@@ -1960,8 +1959,8 @@ texdoc stlog close
 \color{black}
 \section{Analysis}
 \subsection{Creation of analysis data set}
-Each of the separate datasets throughout MI cohort creation, remoteness score allocation, comorbidity allocation, treatment outcome allocation, medication receipt, medication adherence, and socioeconomic disadvtage score allocation were merged into one dataset. \\
-In order to ensure there were receipt and PDC scores for MI admissions where there were no PBS data were defined to have not receieved therapy and not adherent to therapy. These admissions replaced blank values following the merge with 0 values to ensure they could be anlysed in the regression model. \\
+Each of the separate datasets throughout MI cohort creation, remoteness score allocation, comorbidity allocation, treatment outcome allocation, medication dispensing, medication adherence, and socioeconomic disadvtage score allocation were merged into one dataset. \\
+In order to ensure there were dispensing and PDC scores for MI admissions where there were no PBS data were defined to have not receieved therapy and not adherent to therapy. These admissions replaced blank values following the merge with 0 values to ensure they could be anlysed in the regression model. \\
 Lastly, MIs where no ARIA scores were available were dropped from the analysis dataset. 
 \color{violet}
 ***/
@@ -2066,11 +2065,11 @@ replace dead365 = 1 if deathdate <= sepdate + 365
 *Remove MIs with no ARIA
 count if mean_ARIA == .
 drop if mean_ARIA == .
-*replace PDC_adj values with 0 if alive but no receipt
+*replace PDC_adj values with 0 if alive but no dispensing
 foreach i in PDC_adj_beta PDC_adj_statins PDC_adj_P2Y12 PDC_adj_ACE PDC_adj_ARB PDC_adj_ACE_ARB PDC_adj_beta {
 replace `i' = 0 if hosp_mort == 0 & `i' ==.
 }
-*replace receipt with 0 if alive at 90 days 
+*replace dispensing with 0 if alive at 90 days 
 foreach i in beta_90d ace_90d arb_90d ace_arb_90d P2Y12_90d statin_90d {
 replace `i' = 0 if hosp_mort == 0 & `i' ==.
 }
@@ -2177,11 +2176,11 @@ replace demoname = "ACEi" if _n == 26
 replace demoname = "ARB" if _n == 27
 replace demoname = "ACEi or ARB" if _n == 28
 replace demoname = "Beta blocker" if _n == 29
-replace demoname = "No medication received"  if _n == 30
-replace demoname = "One medication class received"  if _n == 31
-replace demoname = "Two medication classes received" if _n == 32
-replace demoname = "Three medication classes received"  if _n == 33
-replace demoname = "Four medication classes received" if _n == 34
+replace demoname = "No medication dispensed"  if _n == 30
+replace demoname = "One medication class dispensed"  if _n == 31
+replace demoname = "Two medication classes dispensed" if _n == 32
+replace demoname = "Three medication classes dispensed"  if _n == 33
+replace demoname = "Four medication classes dispensed" if _n == 34
 
 
 drop NSTEMItotal STEMItotal
@@ -2271,11 +2270,11 @@ replace demoname = "ACEi" if _n == 26
 replace demoname = "ARB" if _n == 27
 replace demoname = "ACEi or ARB" if _n == 28
 replace demoname = "Beta blocker" if _n == 29
-replace demoname = "No medication received"  if _n == 30
-replace demoname = "One medication class received"  if _n == 31
-replace demoname = "Two medication classes received" if _n == 32
-replace demoname = "Three medication classes received"  if _n == 33
-replace demoname = "Four medication classes received" if _n == 34
+replace demoname = "No medication dispensed"  if _n == 30
+replace demoname = "One medication class dispensed"  if _n == 31
+replace demoname = "Two medication classes dispensed" if _n == 32
+replace demoname = "Three medication classes dispensed"  if _n == 33
+replace demoname = "Four medication classes dispensed" if _n == 34
 
 drop HAtotal Atotal MAtotal 
 order demoname total totalproportion HA HAproportion A Aproportion MA MAproportion 
@@ -2339,8 +2338,8 @@ replace category = "Baseline characteristics" if _n == 2
 replace category = "Co-morbidities" if _n == 10
 replace category = "Revascularisation strategy" if _n == 15
 replace category = "Socio-economic status" if _n == 17
-replace category = "Medications received within 90 days prior to MI admission" if _n == 20
-replace category = "Medications received within 90 days following MI admission" if _n == 25
+replace category = "Medications dispensed within 90 days prior to MI admission" if _n == 20
+replace category = "Medications dispensed within 90 days following MI admission" if _n == 25
 order category
 save totdemotable, replace
 use totdemotable, clear
@@ -2436,11 +2435,11 @@ replace demoname = "ACEi" if _n == 24
 replace demoname = "ARB" if _n == 25
 replace demoname = "ACEi or ARB" if _n == 26
 replace demoname = "Beta blocker" if _n == 27
-replace demoname = "No medication received"  if _n == 28
-replace demoname = "One medication class received"  if _n == 29
-replace demoname = "Two medication classes received" if _n == 30
-replace demoname = "Three medication classes received"  if _n == 31
-replace demoname = "Four medication classes received" if _n == 32
+replace demoname = "No medication dispensed"  if _n == 28
+replace demoname = "One medication class dispensed"  if _n == 29
+replace demoname = "Two medication classes dispensed" if _n == 30
+replace demoname = "Three medication classes dispensed"  if _n == 31
+replace demoname = "Four medication classes dispensed" if _n == 32
 
 
 drop NSTEMItotal STEMItotal
@@ -2529,11 +2528,11 @@ replace demoname = "ACEi" if _n == 24
 replace demoname = "ARB" if _n == 25
 replace demoname = "ACEi or ARB" if _n == 26
 replace demoname = "Beta blocker" if _n == 27
-replace demoname = "No medication received"  if _n == 28
-replace demoname = "One medication class received"  if _n == 29
-replace demoname = "Two medication classes received" if _n == 30
-replace demoname = "Three medication classes received"  if _n == 31
-replace demoname = "Four medication classes received" if _n == 32
+replace demoname = "No medication dispensed"  if _n == 28
+replace demoname = "One medication class dispensed"  if _n == 29
+replace demoname = "Two medication classes dispensed" if _n == 30
+replace demoname = "Three medication classes dispensed"  if _n == 31
+replace demoname = "Four medication classes dispensed" if _n == 32
 
 
 drop HAtotal Atotal MAtotal 
@@ -2597,8 +2596,8 @@ replace category = "Baseline characteristics" if _n == 2
 replace category = "Co-morbidities" if _n == 10
 replace category = "Revascularisation strategy" if _n == 15
 replace category = "Socio-economic status" if _n == 17
-replace category = "Medications received within 90 days prior to MI admission" if _n == 18
-replace category = "Medications received within 90 days post MI admission" if _n == 23
+replace category = "Medications dispensed within 90 days prior to MI admission" if _n == 18
+replace category = "Medications dispensed within 90 days post MI admission" if _n == 23
 order category
 save analdemotable, replace
 use analdemotable, clear
@@ -2696,11 +2695,11 @@ replace demoname = "ACEi" if _n == 27
 replace demoname = "ARB" if _n == 28
 replace demoname = "ACEi or ARB" if _n == 29
 replace demoname = "Beta blocker" if _n == 30
-replace demoname = "No medication received"  if _n == 31
-replace demoname = "One medication class received"  if _n == 32
-replace demoname = "Two medication classes received" if _n == 33
-replace demoname = "Three medication classes received"  if _n == 34
-replace demoname = "Four medication classes received" if _n == 35
+replace demoname = "No medication dispensed"  if _n == 31
+replace demoname = "One medication class dispensed"  if _n == 32
+replace demoname = "Two medication classes dispensed" if _n == 33
+replace demoname = "Three medication classes dispensed"  if _n == 34
+replace demoname = "Four medication classes dispensed" if _n == 35
 replace demoname = ">80% PDC P2Y12i" if _n == 36
 replace demoname = ">80% PDC Statin" if _n == 37
 replace demoname = ">80% PDC ACEi or ARB" if _n == 38
@@ -2760,8 +2759,8 @@ replace category = "Baseline characteristics" if _n == 4
 replace category = "Co-morbidities" if _n == 12
 replace category = "Revascularisation strategy" if _n == 17
 replace category = "Socio-economic status" if _n == 19
-replace category = "Medication received within 90 days prior to MI" if _n == 20
-replace category = "Medication received within 90 days post MI" if _n == 25
+replace category = "Medication dispensed within 90 days prior to MI" if _n == 20
+replace category = "Medication dispensed within 90 days post MI" if _n == 25
 replace category = "Medication adherence 12 months post MI" if _n == 37
 order category
 save analpopariastemi_irsd, replace
@@ -2772,7 +2771,7 @@ texdoc stlog close
 /***
 \color{black}
 \subsection{Data analysis}
-\subsection{Regression analysis for receipt using means for NSTEMI and STEMI cohorts for prediction (splines and full adjusted model)}
+\subsection{Regression analysis for dispensing using means for NSTEMI and STEMI cohorts for prediction (splines and full adjusted model)}
 We first modified age categoires to enable us to create splines of age, then generated mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI. These were selected from eac of the separate NSTEMI and STEMI stratified cohorts. Following this step, we created a dataset where these values where present for each ARIA value, including splines of ARIA values and age.\\
 We selected a logistic regression model for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
 \color{violet}
@@ -2827,7 +2826,7 @@ texdoc stlog close
 
 /***
 \color{black}
-Using the model above, we predcited probabilities of receipt for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
+Using the model above, we predcited probabilities of dispensing for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
 \begin{itemize}
 \item Mean age 70.93
 \item Sex 1.36 [male = 1 female = 2]
@@ -2841,7 +2840,7 @@ Using the model above, we predcited probabilities of receipt for NSTEMI with the
 \item Received CABG within 30 days of admission (0.11)
 \end{itemize}
 
-Using the model above, we predcited probabilities of receipt for STEMI with the following mean values derived from the STEMI stratified cohort: \\
+Using the model above, we predcited probabilities of dispensing for STEMI with the following mean values derived from the STEMI stratified cohort: \\
 \begin{itemize}
 \item Mean age 64.24
 \item Sex 1.25 [male = 1 female = 2]
@@ -2877,7 +2876,7 @@ save `i'_`ii', replace
 }
 }
 
-*Create figure of predicted probability of receipt according ARIA
+*Create figure of predicted probability of dispensing according ARIA
 {
 *NSTEMI 
 foreach i in beta_90d ace_arb_90d statin_90d P2Y12_90d {
@@ -2887,7 +2886,7 @@ twoway ///
 (rarea ul ll mean_ARIA if STEMI == 0, col(navy%30) fintensity(inten80) lwidth(none)) ///
 (line A mean_ARIA if STEMI == 0, col(navy)) ///
 , graphregion(color(white)) ///
-xtitle("mean ARIA score") ytitle("Predicted probability of receipt at 90 days post discharge") ///
+xtitle("mean ARIA score") ytitle("Predicted probability of dispensing at 90 days post discharge") ///
 legend(order(2 "NSTEMI") position(6) ring(0) row(1) col(2) region(lcolor(white) color(none))) ///
 yscale(range(0.5 1)) ylabel(0.5 "0.5" 0.6 "0.6" 0.7 "0.7" 0.8 "0.8" 0.9 "0.9" 1.0 "1.0" , angle(0) format(%9.0f)) xscale(range(0 5)) ///
 title("`i'", placement(west) color(black) size(medium))
@@ -2901,7 +2900,7 @@ twoway ///
 (rarea ul ll mean_ARIA if STEMI == 1, col(red%30) fintensity(inten80) lwidth(none)) ///
 (line A mean_ARIA if STEMI == 1 , col(red)) ///
 , graphregion(color(white)) ///
-xtitle("mean ARIA score") ytitle("Predicted probability of receipt at 90 days post discharge") ///
+xtitle("mean ARIA score") ytitle("Predicted probability of dispensing at 90 days post discharge") ///
 legend(order(2 "STEMI") position(6) ring(0) row(1) col(2) region(lcolor(white) color(none))) ///
 yscale(range(0.5 1)) ylabel(0.5 "0.5" 0.6 "0.6" 0.7 "0.7" 0.8 "0.8" 0.9 "0.9" 1.0 "1.0" , angle(0) format(%9.0f)) xscale(range(0 5)) ///
 title("`i'", placement(west) color(black) size(medium))
@@ -2920,7 +2919,7 @@ fig_receipt_beta_90d_0.gph ///
 fig_receipt_ace_arb_90d_1.gph ///
 fig_receipt_ace_arb_90d_0.gph ///
 , altshrink cols(2) graphregion(color(white)) xsize(4.5)
-graph export "G:\Adam\Project 2  - location and MI outcomes\Results\Fig_receipt_STEMI_NSTEMI.pdf", as(pdf) name("Graph") replace
+graph export "G:\Adam\Project 2  - location and MI outcomes\Results\Fig_dispensing_STEMI_NSTEMI.pdf", as(pdf) name("Graph") replace
 }
 }
 
@@ -2928,7 +2927,7 @@ texdoc stlog close
 
 /***
 \color{black}
-\subsection{Regression analysis for Receipt using means for total cohort for prediction (splines and full adjusted model)}
+\subsection{Regression analysis for dispensing using means for total cohort for prediction (splines and full adjusted model)}
 This step replicated the method above, however we took the means of of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort and applied it STEMI and NSTEMI respectively. This is presented in the supplement of the manuscript as a secondary analysis. 
 \color{violet}
 ***/
@@ -2971,7 +2970,7 @@ texdoc stlog close
 
 /***
 \color{black}
-Using the model above, we predcited probabilities of receipt for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
+Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
 \begin{itemize}
 \item Mean age 69.20
 \item Sex 1.33 [male = 1 female = 2]
@@ -3007,7 +3006,7 @@ save `i'_`ii'_total, replace
 }
 }
 }
-*Create figure of predicted probability of receipt according ARIA
+*Create figure of predicted probability of dispensing according ARIA
 {
 foreach i in beta_90d ace_arb_90d statin_90d P2Y12_90d {
 use `i'_0_total, clear
@@ -3019,7 +3018,7 @@ twoway ///
 (rarea ul ll mean_ARIA if STEMI == 1, col(red%30) fintensity(inten80) lwidth(none)) ///
 (line A mean_ARIA if STEMI == 1 , col(red)) ///
 , graphregion(color(white)) ///
-xtitle("mean ARIA score") ytitle("Predicted probability of receipt at 90 days post discharge") ///
+xtitle("mean ARIA score") ytitle("Predicted probability of dispensing at 90 days post discharge") ///
 legend(order(2 "NSTEMI") position(6) ring(0) row(1) col(2) region(lcolor(white) color(none))) ///
 yscale(range(0.5 1)) ylabel(0.5 "0.5" 0.6 "0.6" 0.7 "0.7" 0.8 "0.8" 0.9 "0.9" 1.0 "1.0" , angle(0) format(%9.0f)) xscale(range(0 5)) ///
 title("`i'", placement(west) color(black) size(medium))
@@ -3034,7 +3033,7 @@ fig_receipt_statin_90d_total.gph ///
 fig_receipt_beta_90d_total.gph ///
 fig_receipt_ace_arb_90d_total.gph ///
 , altshrink cols(2) graphregion(color(white)) xsize(4.5)
-graph export "G:\Adam\Project 2  - location and MI outcomes\Results\Fig_receipt_total.pdf", as(pdf) name("Graph") replace
+graph export "G:\Adam\Project 2  - location and MI outcomes\Results\Fig_dispensing_total.pdf", as(pdf) name("Graph") replace
 }
 }
 
@@ -3043,7 +3042,7 @@ texdoc stlog close
 /***
 \color{black}
 \subsection{Regression analysis for PDC using means for NSTEMI and STIME cohorts for prediction (splines and fully adjusted model only)}
-We used the same method for receipt in terms of splines of ARIA and age, as well as mean values of of sex, IRSD, HT, AF, HF, DM, CABG and PCI. We ran the analysis twice like in the receipt analysis, one with mean values bvased on NSTEMI and STEMI straitifed cohorts, and the other using mean values from the total analysed cohort. \\
+We used the same method for dispensing in terms of splines of ARIA and age, as well as mean values of of sex, IRSD, HT, AF, HF, DM, CABG and PCI. We ran the analysis twice like in the dispensing analysis, one with mean values bvased on NSTEMI and STEMI straitifed cohorts, and the other using mean values from the total analysed cohort. \\
 We selected a fractional logistic regression model with a logit link function for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
 \color{violet}
 ***/
@@ -3168,7 +3167,7 @@ texdoc stlog close
 /***
 \color{black}
 \subsection{Regression analysis for PDC using means for total analysed population for prediction (splines and fully adjusted model only)}
-This analysis was the same as above, but like with the receipt analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. 
+This analysis was the same as above, but like with the dispensing analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. 
 \color{violet}
 ***/
 
@@ -3191,7 +3190,7 @@ texdoc stlog close
 
 /***
 \color{black}
-Using the model above, we predcited probabilities of receipt for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
+Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
 \begin{itemize}
 \item Mean age 69.20
 \item Sex 1.33 [male = 1 female = 2]
@@ -3262,6 +3261,8 @@ texdoc stlog close
 
 /***
 \clearpage
+\color{black}
+\bibliography{C:/Users/acliv1/Documents/library.bib}
 \end{document}
 
 ***/
