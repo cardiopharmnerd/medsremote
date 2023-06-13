@@ -434,10 +434,7 @@ This table includes the total analysed cohort, which excludes non-victorians and
 \subsubsection{Regression analysis for dispensing using means for NSTEMI and STEMI cohorts for prediction (splines and full adjusted model)}
 We first modified age categoires to enable us to create splines of age, then generated mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI. These were selected from eac of the separate NSTEMI and STEMI stratified cohorts. Following this step, we created a dataset where these values where present for each ARIA value, including splines of ARIA values and age.\\
 We selected a logistic regression model for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
-\color{violet}
-\begin{stlog}\input{log/45.log.tex}\end{stlog}
-\color{black}
-Using the model above, we predcited probabilities of dispensing for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
+Using the model, we predcited probabilities of dispensing for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
 \begin{itemize}
 \item Mean age 70.93
 \item Sex 1.36 [male = 1 female = 2]
@@ -465,14 +462,65 @@ Using the model above, we predcited probabilities of dispensing for STEMI with t
 \item Received CABG within 30 days of admission 0.08 (binary)
 \end{itemize}
 \color{violet}
-\begin{stlog}\input{log/46.log.tex}\end{stlog}
+\begin{stlog}\input{log/45.log.tex}\end{stlog}
 \color{black}
 \subsubsection{Regression analysis for dispensing using means for total cohort for prediction (splines and full adjusted model)}
 This step replicated the method above, however we took the means of of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort and applied it STEMI and NSTEMI respectively. This is presented in the supplement of the manuscript as a secondary analysis. 
+Using the model, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
+\begin{itemize}
+\item Mean age 69.20
+\item Sex 1.33 [male = 1 female = 2]
+\item IRSD score 998.36
+\item Presence of hypertension 0.62 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.16 (binary)
+\item Presence of diabetes 0.30 (binary)
+\item Presence of ischaemic stroke 0.10 (binary)
+\item received PCI within 30 days of admission 0.44 (binary)
+\item Received CABG within 30 days of admission (0.10)
+\end{itemize}
+\color{violet}
+\begin{stlog}\input{log/46.log.tex}\end{stlog}
+\color{black}
+\subsubsection{Regression analysis for PDC using means for NSTEMI and STIME cohorts for prediction (splines and fully adjusted model only)}
+We used the same method for dispensing in terms of splines of ARIA and age, as well as mean values of of sex, IRSD, HT, AF, HF, DM, CABG and PCI. We ran the analysis twice like in the dispensing analysis, one with mean values bvased on NSTEMI and STEMI straitifed cohorts, and the other using mean values from the total analysed cohort. \\
+We selected a fractional logistic regression model with a logit link function for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\~\\
+
+Using the model above, we predcited PDC for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\~\\
+\textbf{NSTEMI}
+\begin{itemize}
+\item Mean age 70.93
+\item Sex 1.36 [male = 1 female = 2]
+\item IRSD score 997.87
+\item Presence of hypertension 0.65 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.17 (binary)
+\item Presence of diabetes 0.32 (binary)
+\item Presence of ischaemic stroke 0.11 (binary)
+\item received PCI within 30 days of admission 0.33 (binary)
+\item Received CABG within 30 days of admission (0.11)
+\end{itemize}
+
+Using the model above, we predcited PDC for STEMI with the following mean values derived from the STEMI stratified cohort: \\~\\
+\textbf{STEMI}
+\begin{itemize}
+\item Mean age 64.24
+\item Sex 1.25 [male = 1 female = 2]
+\item IRSD score 999.77
+\item Presence of hypertension 0.54 (binary)
+\item Presence of AF 0.12 (binary)
+\item Presence of heart failure 0.14 (binary)
+\item Presence of diabetes 0.22 (binary)
+\item Presence of ischaemic stroke 0.08 (binary)
+\item received PCI within 30 days of admission 0.75 (binary)
+\item Received CABG within 30 days of admission 0.08 (binary)
+\end{itemize}
 \color{violet}
 \begin{stlog}\input{log/47.log.tex}\end{stlog}
 \color{black}
-Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
+\subsubsection{Regression analysis for PDC using means for total analysed population for prediction (splines and fully adjusted model only)}
+This analysis was the same as above, but like with the dispensing analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. \\
+Using the model, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: 
 \begin{itemize}
 \item Mean age 69.20
 \item Sex 1.33 [male = 1 female = 2]
@@ -488,13 +536,10 @@ Using the model above, we predcited probabilities of dispensing for NSTEMI and S
 \color{violet}
 \begin{stlog}\input{log/48.log.tex}\end{stlog}
 \color{black}
-\subsubsection{Regression analysis for PDC using means for NSTEMI and STIME cohorts for prediction (splines and fully adjusted model only)}
-We used the same method for dispensing in terms of splines of ARIA and age, as well as mean values of of sex, IRSD, HT, AF, HF, DM, CABG and PCI. We ran the analysis twice like in the dispensing analysis, one with mean values bvased on NSTEMI and STEMI straitifed cohorts, and the other using mean values from the total analysed cohort. \\
-We selected a fractional logistic regression model with a logit link function for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
-\color{violet}
-\begin{stlog}\input{log/49.log.tex}\end{stlog}
-\color{black}
-Using the model above, we predcited PDC for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
+\subsection{Supplemental analysis}
+In the previous analysis, all MI admissions were considered, with those with no initial dispensing of medications included in PDC, with non-dispensing of therapy considered as non-adherent. This was based on the premise that all people with MI should eb initiated on secondary prevention therapy prior to discharge, and be continued for at least one year. This analysis instead excludes those where there was no initial disensing (within 90 days from discharge) occurred for each specific class of secondary prevention medication.\\
+Predictions for proportion of days covered where still made at the means for the total stratified NSTEMI and STEMI cohorts:\\~\\
+\textbf{NSTEMI}
 \begin{itemize}
 \item Mean age 70.93
 \item Sex 1.36 [male = 1 female = 2]
@@ -508,7 +553,8 @@ Using the model above, we predcited PDC for NSTEMI with the following mean value
 \item Received CABG within 30 days of admission (0.11)
 \end{itemize}
 
-Using the model above, we predcited PDC for STEMI with the following mean values derived from the STEMI stratified cohort: \\
+Using the model above, we predcited PDC for STEMI with the following mean values derived from the STEMI stratified cohort: \\~\\
+\textbf{STEMI}
 \begin{itemize}
 \item Mean age 64.24
 \item Sex 1.25 [male = 1 female = 2]
@@ -521,29 +567,14 @@ Using the model above, we predcited PDC for STEMI with the following mean values
 \item received PCI within 30 days of admission 0.75 (binary)
 \item Received CABG within 30 days of admission 0.08 (binary)
 \end{itemize}
+
+We first need to create the spline data set for cohort where non-dispensing at 90 days is excluded from PDC analysis, then replicate the above analysis for PDC using NSTEMI and STEMI stratified cohorts.
+\color{violet}
+\begin{stlog}\input{log/49.log.tex}\end{stlog}
+\color{black}
+We then plotted both predicted PDC values for the total analysed cohort as well as the cohort who were dispensed at least one prescription in the first 90 days for each medication class. 
 \color{violet}
 \begin{stlog}\input{log/50.log.tex}\end{stlog}
-\color{black}
-\subsubsection{Regression analysis for PDC using means for total analysed population for prediction (splines and fully adjusted model only)}
-This analysis was the same as above, but like with the dispensing analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. 
-\color{violet}
-\begin{stlog}\input{log/51.log.tex}\end{stlog}
-\color{black}
-Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
-\begin{itemize}
-\item Mean age 69.20
-\item Sex 1.33 [male = 1 female = 2]
-\item IRSD score 998.36
-\item Presence of hypertension 0.62 (binary)
-\item Presence of AF 0.14 (binary)
-\item Presence of heart failure 0.16 (binary)
-\item Presence of diabetes 0.30 (binary)
-\item Presence of ischaemic stroke 0.10 (binary)
-\item received PCI within 30 days of admission 0.44 (binary)
-\item Received CABG within 30 days of admission (0.10)
-\end{itemize}
-\color{violet}
-\begin{stlog}\input{log/52.log.tex}\end{stlog}
 \clearpage
 \color{black}
 \bibliography{C:/Users/acliv1/Documents/library.bib}

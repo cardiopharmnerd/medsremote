@@ -2065,16 +2065,17 @@ replace dead365 = 1 if deathdate <= sepdate + 365
 *Remove MIs with no ARIA
 count if mean_ARIA == .
 drop if mean_ARIA == .
-*replace PDC_adj values with 0 if alive but no dispensing
-foreach i in PDC_adj_beta PDC_adj_statins PDC_adj_P2Y12 PDC_adj_ACE PDC_adj_ARB PDC_adj_ACE_ARB PDC_adj_beta {
-replace `i' = 0 if hosp_mort == 0 & `i' ==.
-}
 *replace dispensing with 0 if alive at 90 days 
 foreach i in beta_90d ace_90d arb_90d ace_arb_90d P2Y12_90d statin_90d {
 replace `i' = 0 if hosp_mort == 0 & `i' ==.
 }
+save MI_ADS_ALL_SA, replace
+*replace PDC_adj values with 0 if alive but no dispensing
+foreach i in PDC_adj_beta PDC_adj_statins PDC_adj_P2Y12 PDC_adj_ACE PDC_adj_ARB PDC_adj_ACE_ARB PDC_adj_beta {
+replace `i' = 0 if hosp_mort == 0 & `i' ==.
+}
 save MI_ADS_ALL, replace
-
+}
 texdoc stlog close
 
 /***
@@ -2774,6 +2775,33 @@ texdoc stlog close
 \subsubsection{Regression analysis for dispensing using means for NSTEMI and STEMI cohorts for prediction (splines and full adjusted model)}
 We first modified age categoires to enable us to create splines of age, then generated mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI. These were selected from eac of the separate NSTEMI and STEMI stratified cohorts. Following this step, we created a dataset where these values where present for each ARIA value, including splines of ARIA values and age.\\
 We selected a logistic regression model for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
+Using the model, we predcited probabilities of dispensing for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
+\begin{itemize}
+\item Mean age 70.93
+\item Sex 1.36 [male = 1 female = 2]
+\item IRSD score 997.87
+\item Presence of hypertension 0.65 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.17 (binary)
+\item Presence of diabetes 0.32 (binary)
+\item Presence of ischaemic stroke 0.11 (binary)
+\item received PCI within 30 days of admission 0.33 (binary)
+\item Received CABG within 30 days of admission (0.11)
+\end{itemize}
+
+Using the model above, we predcited probabilities of dispensing for STEMI with the following mean values derived from the STEMI stratified cohort: \\
+\begin{itemize}
+\item Mean age 64.24
+\item Sex 1.25 [male = 1 female = 2]
+\item IRSD score 999.77
+\item Presence of hypertension 0.54 (binary)
+\item Presence of AF 0.12 (binary)
+\item Presence of heart failure 0.14 (binary)
+\item Presence of diabetes 0.22 (binary)
+\item Presence of ischaemic stroke 0.08 (binary)
+\item received PCI within 30 days of admission 0.75 (binary)
+\item Received CABG within 30 days of admission 0.08 (binary)
+\end{itemize}
 \color{violet}
 ***/
 
@@ -2820,43 +2848,6 @@ mkspline ages = agegroup, cubic knots(32.5 62.5 72.5 77.5)
 drop agespline
 
 logistic `i' c.ARIAS* c.ages* sex IRSD_score HT AF HF DM IS CABG_tag PCI_tag if STEMI ==`ii', coef
-
-
-texdoc stlog close
-
-/***
-\color{black}
-Using the model above, we predcited probabilities of dispensing for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
-\begin{itemize}
-\item Mean age 70.93
-\item Sex 1.36 [male = 1 female = 2]
-\item IRSD score 997.87
-\item Presence of hypertension 0.65 (binary)
-\item Presence of AF 0.14 (binary)
-\item Presence of heart failure 0.17 (binary)
-\item Presence of diabetes 0.32 (binary)
-\item Presence of ischaemic stroke 0.11 (binary)
-\item received PCI within 30 days of admission 0.33 (binary)
-\item Received CABG within 30 days of admission (0.11)
-\end{itemize}
-
-Using the model above, we predcited probabilities of dispensing for STEMI with the following mean values derived from the STEMI stratified cohort: \\
-\begin{itemize}
-\item Mean age 64.24
-\item Sex 1.25 [male = 1 female = 2]
-\item IRSD score 999.77
-\item Presence of hypertension 0.54 (binary)
-\item Presence of AF 0.12 (binary)
-\item Presence of heart failure 0.14 (binary)
-\item Presence of diabetes 0.22 (binary)
-\item Presence of ischaemic stroke 0.08 (binary)
-\item received PCI within 30 days of admission 0.75 (binary)
-\item Received CABG within 30 days of admission 0.08 (binary)
-\end{itemize}
-\color{violet}
-***/
-
-texdoc stlog, cmdlog nodo
 
 use analysis_adherence_set_`ii', clear
 *create prediction variable from model, then transform into probabability
@@ -2929,6 +2920,19 @@ texdoc stlog close
 \color{black}
 \subsubsection{Regression analysis for dispensing using means for total cohort for prediction (splines and full adjusted model)}
 This step replicated the method above, however we took the means of of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort and applied it STEMI and NSTEMI respectively. This is presented in the supplement of the manuscript as a secondary analysis. 
+Using the model, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
+\begin{itemize}
+\item Mean age 69.20
+\item Sex 1.33 [male = 1 female = 2]
+\item IRSD score 998.36
+\item Presence of hypertension 0.62 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.16 (binary)
+\item Presence of diabetes 0.30 (binary)
+\item Presence of ischaemic stroke 0.10 (binary)
+\item received PCI within 30 days of admission 0.44 (binary)
+\item Received CABG within 30 days of admission (0.10)
+\end{itemize}
 \color{violet}
 ***/
 
@@ -2965,28 +2969,6 @@ mkspline ages = agegroup, cubic knots(32.5 62.5 72.5 77.5)
 drop agespline
 
 logistic `i' c.ARIAS* c.ages* sex IRSD_score HT AF HF DM IS CABG_tag PCI_tag if STEMI ==`ii', coef
-
-texdoc stlog close
-
-/***
-\color{black}
-Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
-\begin{itemize}
-\item Mean age 69.20
-\item Sex 1.33 [male = 1 female = 2]
-\item IRSD score 998.36
-\item Presence of hypertension 0.62 (binary)
-\item Presence of AF 0.14 (binary)
-\item Presence of heart failure 0.16 (binary)
-\item Presence of diabetes 0.30 (binary)
-\item Presence of ischaemic stroke 0.10 (binary)
-\item received PCI within 30 days of admission 0.44 (binary)
-\item Received CABG within 30 days of admission (0.10)
-\end{itemize}
-\color{violet}
-***/
-
-texdoc stlog, cmdlog nodo
 
 
 use analysis_adherence_set_total, clear
@@ -3043,9 +3025,40 @@ texdoc stlog close
 \color{black}
 \subsubsection{Regression analysis for PDC using means for NSTEMI and STIME cohorts for prediction (splines and fully adjusted model only)}
 We used the same method for dispensing in terms of splines of ARIA and age, as well as mean values of of sex, IRSD, HT, AF, HF, DM, CABG and PCI. We ran the analysis twice like in the dispensing analysis, one with mean values bvased on NSTEMI and STEMI straitifed cohorts, and the other using mean values from the total analysed cohort. \\
-We selected a fractional logistic regression model with a logit link function for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\
+We selected a fractional logistic regression model with a logit link function for this analysis, using splines of ARIA as a continuous variable to account for non-linearity. The model was adjusted for multiple covariates; with and spline effects of age; categorical variables of: sex, the presence of hypertension, atrial fibrillation, diabetes, heart failure, and ischaemic stroke, as well as and revascularisation strategy of PCI or CABG within 30 days post MI; and socio-economic status using IRSD score as continuous variable. \\~\\
+
+Using the model above, we predcited PDC for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\~\\
+\textbf{NSTEMI}
+\begin{itemize}
+\item Mean age 70.93
+\item Sex 1.36 [male = 1 female = 2]
+\item IRSD score 997.87
+\item Presence of hypertension 0.65 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.17 (binary)
+\item Presence of diabetes 0.32 (binary)
+\item Presence of ischaemic stroke 0.11 (binary)
+\item received PCI within 30 days of admission 0.33 (binary)
+\item Received CABG within 30 days of admission (0.11)
+\end{itemize}
+
+Using the model above, we predcited PDC for STEMI with the following mean values derived from the STEMI stratified cohort: \\~\\
+\textbf{STEMI}
+\begin{itemize}
+\item Mean age 64.24
+\item Sex 1.25 [male = 1 female = 2]
+\item IRSD score 999.77
+\item Presence of hypertension 0.54 (binary)
+\item Presence of AF 0.12 (binary)
+\item Presence of heart failure 0.14 (binary)
+\item Presence of diabetes 0.22 (binary)
+\item Presence of ischaemic stroke 0.08 (binary)
+\item received PCI within 30 days of admission 0.75 (binary)
+\item Received CABG within 30 days of admission 0.08 (binary)
+\end{itemize}
 \color{violet}
 ***/
+
 
 texdoc stlog, cmdlog nodo
 
@@ -3063,41 +3076,6 @@ drop agespline
 fracreg logit `i' c.ARIAS* c.ages* sex IRSD_score HT AF HF DM IS CABG_tag PCI_tag if STEMI ==`ii'
 }
 
-texdoc stlog close
-
-/***
-\color{black}
-Using the model above, we predcited PDC for NSTEMI with the following mean values were dervided from the NSTEMI stratified cohort: \\
-\begin{itemize}
-\item Mean age 70.93
-\item Sex 1.36 [male = 1 female = 2]
-\item IRSD score 997.87
-\item Presence of hypertension 0.65 (binary)
-\item Presence of AF 0.14 (binary)
-\item Presence of heart failure 0.17 (binary)
-\item Presence of diabetes 0.32 (binary)
-\item Presence of ischaemic stroke 0.11 (binary)
-\item received PCI within 30 days of admission 0.33 (binary)
-\item Received CABG within 30 days of admission (0.11)
-\end{itemize}
-
-Using the model above, we predcited PDC for STEMI with the following mean values derived from the STEMI stratified cohort: \\
-\begin{itemize}
-\item Mean age 64.24
-\item Sex 1.25 [male = 1 female = 2]
-\item IRSD score 999.77
-\item Presence of hypertension 0.54 (binary)
-\item Presence of AF 0.12 (binary)
-\item Presence of heart failure 0.14 (binary)
-\item Presence of diabetes 0.22 (binary)
-\item Presence of ischaemic stroke 0.08 (binary)
-\item received PCI within 30 days of admission 0.75 (binary)
-\item Received CABG within 30 days of admission 0.08 (binary)
-\end{itemize}
-\color{violet}
-***/
-
-texdoc stlog, cmdlog nodo
 
 use analysis_adherence_set_`ii', clear
 *create prediction variable from model, then transform into predicted PDC
@@ -3115,7 +3093,7 @@ keep mean_ARIA A ul ll STEMI
 save `i'_`ii'_adherence, replace
 }
 }
-*Create figure of log incidence rates per drug class
+*Create figure 
 {
 *NSTEMI 
 foreach i in PDC_adj_beta PDC_adj_ACE_ARB PDC_adj_statins PDC_adj_P2Y12 {
@@ -3167,7 +3145,20 @@ texdoc stlog close
 /***
 \color{black}
 \subsubsection{Regression analysis for PDC using means for total analysed population for prediction (splines and fully adjusted model only)}
-This analysis was the same as above, but like with the dispensing analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. 
+This analysis was the same as above, but like with the dispensing analysis, we predicted at the mean values of sex, IRSD, HT, AF, HF, DM, CABG and PCI for the total analysed cohort. This is presented in the supplement of the manuscript as a secondary analysis. \\
+Using the model, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: 
+\begin{itemize}
+\item Mean age 69.20
+\item Sex 1.33 [male = 1 female = 2]
+\item IRSD score 998.36
+\item Presence of hypertension 0.62 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.16 (binary)
+\item Presence of diabetes 0.30 (binary)
+\item Presence of ischaemic stroke 0.10 (binary)
+\item received PCI within 30 days of admission 0.44 (binary)
+\item Received CABG within 30 days of admission (0.10)
+\end{itemize}
 \color{violet}
 ***/
 
@@ -3186,28 +3177,6 @@ drop agespline
 
 fracreg logit `i' c.ARIAS* c.ages* sex IRSD_score HT AF HF DM IS CABG_tag PCI_tag if STEMI ==`ii'
 
-texdoc stlog close
-
-/***
-\color{black}
-Using the model above, we predcited probabilities of dispensing for NSTEMI and STEMI with the following mean values were derived from the total analysed cohort: \\
-\begin{itemize}
-\item Mean age 69.20
-\item Sex 1.33 [male = 1 female = 2]
-\item IRSD score 998.36
-\item Presence of hypertension 0.62 (binary)
-\item Presence of AF 0.14 (binary)
-\item Presence of heart failure 0.16 (binary)
-\item Presence of diabetes 0.30 (binary)
-\item Presence of ischaemic stroke 0.10 (binary)
-\item received PCI within 30 days of admission 0.44 (binary)
-\item Received CABG within 30 days of admission (0.10)
-\end{itemize}
-\color{violet}
-***/
-
-texdoc stlog, cmdlog nodo
-
 use analysis_adherence_set_total, clear
 *create prediction variable from model, then transform into probabability
 predict A
@@ -3224,7 +3193,7 @@ keep mean_ARIA A ul ll STEMI
 save `i'_`ii'_adherence_total, replace
 }
 }
-*Create figure of log incidence rates per drug class
+*Create figure per drug class
 {
 foreach i in PDC_adj_beta PDC_adj_ACE_ARB PDC_adj_statins PDC_adj_P2Y12 {
 use `i'_0_adherence_total, clear
@@ -3255,6 +3224,193 @@ graph export "G:\Adam\Project 2  - location and MI outcomes\Results\Fig_pdc_tota
 }
 }
 }
+
+texdoc stlog close
+
+/***
+\color{black}
+\subsection{Supplemental analysis}
+In the previous analysis, all MI admissions were considered, with those with no initial dispensing of medications included in PDC, with non-dispensing of therapy considered as non-adherent. This was based on the premise that all people with MI should eb initiated on secondary prevention therapy prior to discharge, and be continued for at least one year. This analysis instead excludes those where there was no initial disensing (within 90 days from discharge) occurred for each specific class of secondary prevention medication.\\
+Predictions for proportion of days covered where still made at the means for the total stratified NSTEMI and STEMI cohorts:\\~\\
+\textbf{NSTEMI}
+\begin{itemize}
+\item Mean age 70.93
+\item Sex 1.36 [male = 1 female = 2]
+\item IRSD score 997.87
+\item Presence of hypertension 0.65 (binary)
+\item Presence of AF 0.14 (binary)
+\item Presence of heart failure 0.17 (binary)
+\item Presence of diabetes 0.32 (binary)
+\item Presence of ischaemic stroke 0.11 (binary)
+\item received PCI within 30 days of admission 0.33 (binary)
+\item Received CABG within 30 days of admission (0.11)
+\end{itemize}
+
+Using the model above, we predcited PDC for STEMI with the following mean values derived from the STEMI stratified cohort: \\~\\
+\textbf{STEMI}
+\begin{itemize}
+\item Mean age 64.24
+\item Sex 1.25 [male = 1 female = 2]
+\item IRSD score 999.77
+\item Presence of hypertension 0.54 (binary)
+\item Presence of AF 0.12 (binary)
+\item Presence of heart failure 0.14 (binary)
+\item Presence of diabetes 0.22 (binary)
+\item Presence of ischaemic stroke 0.08 (binary)
+\item received PCI within 30 days of admission 0.75 (binary)
+\item Received CABG within 30 days of admission 0.08 (binary)
+\end{itemize}
+
+We first need to create the spline data set for cohort where non-dispensing at 90 days is excluded from PDC analysis, then replicate the above analysis for PDC using NSTEMI and STEMI stratified cohorts.
+\color{violet}
+***/
+
+texdoc stlog, cmdlog nodo
+
+use MI_ADS_ALL_SA, clear
+drop if hosp_mort != 0 
+br
+gen agespline = agegroup + 2.5 if agegroup != 85
+replace agespline = agegroup + 5 if agegroup == 85
+
+*We will use the analysis adherence set created containing spline values and means of co-variates for the predict command below. 
+*Set up splines and offest followed by fractional regression model construction logit function. 
+forval ii = 0/1 {
+foreach i in PDC_adj_beta PDC_adj_ACE_ARB PDC_adj_statins PDC_adj_P2Y12 {
+use MI_ADS_ALL_spline, clear
+*create splines for remoteness
+mkspline ARIAS = mean_ARIA, cubic knots(0 0.05 0.5 2)
+*create splines for ages
+mkspline ages = agegroup, cubic knots(32.5 62.5 72.5 77.5)
+drop agespline
+
+fracreg logit `i' c.ARIAS* c.ages* sex IRSD_score HT AF HF DM IS CABG_tag PCI_tag if STEMI ==`ii'
+}
+
+
+use SAanalysis_adherence_set_`ii', clear
+*create prediction variable from model, then transform into predicted PDC
+predict A
+predict xb, xb
+*create SE to build confidence intervals
+predict B, stdp
+gen ll = xb - (invnormal(0.975)*B)
+gen ul = xb + (invnormal(0.975)*B)
+replace ll = invlogit(ll)
+replace ul = invlogit(ul)
+gen STEMI = `ii'
+keep mean_ARIA A ul ll STEMI 
+
+save SA`i'_`ii'_adherence, replace
+}
+}
+*Create figure per drug class
+{
+*NSTEMI 
+foreach i in PDC_adj_beta PDC_adj_ACE_ARB PDC_adj_statins PDC_adj_P2Y12 {
+use SA`i'_0_adherence, clear
+
+twoway ///
+(rarea ul ll mean_ARIA if STEMI == 0, col(navy%30) fintensity(inten80) lwidth(none)) ///
+(line A mean_ARIA if STEMI == 0, col(navy)) ///
+, graphregion(color(white)) ///
+xtitle("mean ARIA score") ytitle("Predicted mean PDC at 12 months") ///
+legend(order(4 "NSTEMI") position(6) ring(0) row(1) col(2) region(lcolor(white) color(none))) ///
+yscale(range(0.5 1)) ylabel(0.5 "0.5" 0.6 "0.6" 0.7 "0.7" 0.8 "0.8" 0.9 "0.9" 1.0 "1.0" , angle(0) format(%9.0f)) xscale(range(0 5)) ///
+title("`i'", placement(west) color(black) size(medium))
+graph save "Graph" fig_`i'_0, replace
+}
+*STEMI 
+foreach i in PDC_adj_beta PDC_adj_ACE_ARB PDC_adj_statins PDC_adj_P2Y12 {
+use SA`i'_1_adherence, clear
+
+twoway ///
+(rarea ul ll mean_ARIA if STEMI == 1, col(red%30) fintensity(inten80) lwidth(none)) ///
+(line A mean_ARIA if STEMI == 1 , col(red)) ///
+, graphregion(color(white)) ///
+xtitle("mean ARIA score") ytitle("Predicted mean PDC at 12 months") ///
+legend(order(4 "STEMI") position(6) ring(0) row(1) col(2) region(lcolor(white) color(none))) ///
+yscale(range(0.5 1)) ylabel(0.5 "0.5" 0.6 "0.6" 0.7 "0.7" 0.8 "0.8" 0.9 "0.9" 1.0 "1.0" , angle(0) format(%9.0f)) xscale(range(0 5)) ///
+title("`i'", placement(west) color(black) size(medium))
+graph save "Graph" fig_`i'_1, replace
+}
+*Combine all graphs
+{
+graph combine ///
+fig_PDC_adj_P2Y12_1.gph ///
+fig_PDC_adj_P2Y12_0.gph ///
+fig_PDC_adj_statins_1.gph ///
+fig_PDC_adj_statins_0.gph ///
+fig_PDC_adj_beta_1.gph ///
+fig_PDC_adj_beta_0.gph ///
+fig_PDC_adj_ACE_ARB_1.gph ///
+fig_PDC_adj_ACE_ARB_0.gph ///
+, altshrink cols(2) graphregion(color(white)) xsize(4.5)
+graph export "G:\Adam\Project 2  - location and MI outcomes\Results\Fig_pdc_NSTEMI_STEMI_SA.pdf", as(pdf) name("Graph") replace
+}
+}
+
+texdoc stlog close
+
+
+/***
+\color{black}
+We then plotted both predicted PDC values for the total analysed cohort as well as the cohort who were dispensed at least one prescription in the first 90 days for each medication class. 
+\color{violet}
+***/
+texdoc stlog, cmdlog nodo
+
+*NSTEMI
+foreach i in PDC_adj_beta PDC_adj_ACE_ARB PDC_adj_statins PDC_adj_P2Y12 {
+use SA`i'_0_adherence, clear
+gen SA = 1
+append using `i'_0_adherence_SA, clear
+replace SA =0 if SA ==.
+
+twoway ///
+(rarea ul ll mean_ARIA if SA == 1, col(navy%30) fintensity(inten80) lwidth(none)) ///
+(line A mean_ARIA if sa == 1, col(navy)) ///
+(rarea ul ll mean_ARIA if SA == 0, col(purple%30) fintensity(inten80) lwidth(none)) ///
+(line A mean_ARIA if SA == 0, col(purple)) ///
+, graphregion(color(white)) ///
+xtitle("mean ARIA score") ytitle("Predicted mean PDC at 12 months") ///
+legend(order(4 "NSTEMI- All MI admissions" 2 "NSTEMI-Excluding peoiple with no dispensing") position(6) ring(0) row(1) col(2) region(lcolor(white) color(none))) ///
+yscale(range(0 1)) ylabel(0 "0" 0.1 "0.1" 0.2 "0.2" 0.3 "0.3" 0.4 "0.4" 0.5 "0.5" 0.6 "0.6" 0.7 "0.7" 0.8 "0.8" 0.9 "0.9" 1.0 "1.0" , angle(0) format(%9.0f)) xscale(range(0 5)) ///
+title("`i'", placement(west) color(black) size(medium))
+graph save "Graph" fig_`i'_0_SAcompare, replace
+}
+*STEMI
+foreach i in PDC_adj_beta PDC_adj_ACE_ARB PDC_adj_statins PDC_adj_P2Y12 {
+use SA`i'_1_adherence, clear
+gen SA = 1
+append using `i'_1_adherence_SA, clear
+replace SA =0 if SA ==.
+
+twoway ///
+(rarea ul ll mean_ARIA if SA == 1, col(red%30) fintensity(inten80) lwidth(none)) ///
+(line A mean_ARIA if sa == 1, col(red)) ///
+(rarea ul ll mean_ARIA if SA == 0, col(orange%30) fintensity(inten80) lwidth(none)) ///
+(line A mean_ARIA if SA == 0, col(orange)) ///
+, graphregion(color(white)) ///
+xtitle("mean ARIA score") ytitle("Predicted mean PDC at 12 months") ///
+legend(order(4 "STEMI- All MI admissions" 2 "STEMI-Excluding peoiple with no dispensing") position(6) ring(0) row(1) col(2) region(lcolor(white) color(none))) ///
+yscale(range(0 1)) ylabel(0 "0" 0.1 "0.1" 0.2 "0.2" 0.3 "0.3" 0.4 "0.4" 0.5 "0.5" 0.6 "0.6" 0.7 "0.7" 0.8 "0.8" 0.9 "0.9" 1.0 "1.0" , angle(0) format(%9.0f)) xscale(range(0 5)) ///
+title("`i'", placement(west) color(black) size(medium))
+graph save "Graph" fig_`i'_0_SAcompare, replace
+}
+
+graph combine ///
+fig_PDC_adj_P2Y12_1_SAcompare.gph ///
+fig_PDC_adj_P2Y12_0SAcompare.gph ///
+fig_PDC_adj_statins_1SAcompare.gph ///
+fig_PDC_adj_statins_0SAcompare.gph ///
+fig_PDC_adj_beta_1SAcompare.gph ///
+fig_PDC_adj_beta_0SAcompare.gph ///
+fig_PDC_adj_ACE_ARB_1SAcompare.gph ///
+fig_PDC_adj_ACE_ARB_0SAcompare.gph ///
+, altshrink cols(2) graphregion(color(white)) xsize(4.5)
+graph export "G:\Adam\Project 2  - location and MI outcomes\Results\Fig_pdc_NSTEMI_STEMI_SAcompare.pdf", as(pdf) name("Graph") replace
+
 
 texdoc stlog close
 
