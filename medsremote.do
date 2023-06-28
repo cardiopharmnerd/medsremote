@@ -738,7 +738,7 @@ gen prescribedate = date(date_of_prescribing, "DMY")
 format prescribedate %td
 drop date_of_supply date_of_prescribing
 
-drop if supplydate<td(1/7/2012)
+drop if supplydate<td(1/4/2012)
 
 gen aspirin =0 
 replace aspirin = 1 if atc=="B01AC06"
@@ -777,7 +777,7 @@ format supplydate %td
 gen prescribedate = date(date_of_prescribing, "DMY")
 format prescribedate %td
 drop date_of_supply date_of_prescribing
-drop if supplydate<td(1/7/2012)
+drop if supplydate<td(1/4/2012)
 
 ta atc
 gen beta = 0
