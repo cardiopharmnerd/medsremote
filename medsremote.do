@@ -1355,17 +1355,24 @@ texdoc stlog, cmdlog nodo
 
 *Step 1: Reshape data
 use MI_drugs_class_4, clear 
-drop if supplydate <= admdate - 60
-bysort ppn admdate (supplydate): gen nghost=_n
-ta nghost
-br
-gen dayssupply=30
+drop if supplydate <= sepdate - 60
+drop if supplydate >= admdate & supplydate < sepdate
+merge m:1 pbs_item_code using PBS_packsizes
+keep if _merge == 3
+drop _merge
+replace packsize  =30 if packsize ==1
+ta packsize
+
+rename packsize dayssupply
 drop pbs_item_code
 count if supplydate < sepdate
 gen supplygap = 0
 replace supplygap = admdate - supplydate if supplydate < admdate
-replace supplydate= sepdate - supplygap if supplygap < dayssupply & supplygap > 0 
+drop if supplygap >= dayssupply
+replace supplydate = sepdate - supplygap if supplygap < dayssupply & supplygap > 0
 drop supplygap
+bysort ppn admdate (supplydate) : gen nghost = _n
+ta nghost
 
 reshape wide supplydate dayssupply, i(ppn admdate) j(nghost)
 }
@@ -1380,7 +1387,7 @@ count if study_days <90
 }
 *Step 3: Adjust for when next supply overlaps with previous supply. 
 {
-forval i = 2/52 {
+forval i = 2/51 {
 local j = `i' - 1
 replace supplydate`i'= (supplydate`j' + dayssupply`j') if (supplydate`i' < (supplydate`j' + dayssupply`j') & supplydate`i' !=.)
 }
@@ -1390,7 +1397,7 @@ replace supplydate`i'= (supplydate`j' + dayssupply`j') if (supplydate`i' < (supp
 quietly {
 forval i = 1/365 {
 gen day`i' = 0
-forval j = 1/52 {
+forval j = 1/51 {
 replace day`i' = 1 if supplydate`j' <= sepdate + `i' & sepdate + `i' <= supplydate`j' + dayssupply`j' & supplydate`j' !=.
 }
 }
@@ -1420,20 +1427,23 @@ texdoc stlog, cmdlog nodo
 {
 use MI_drugs_class_1, clear
 drop if supplydate <= sepdate - 60
+drop if supplydate >= admdate & supplydate < sepdate
 merge m:1 pbs_item_code using PBS_packsizes
-keep if _merge==3
+keep if _merge == 3
 drop _merge
 replace packsize = 28 if packsize == 56
 ta packsize
 br
-bysort ppn admdate (supplydate): gen nghost=_n
-ta nghost
 rename packsize dayssupply
 drop pbs_item_code
+count if supplydate < sepdate
 gen supplygap = 0
 replace supplygap = admdate - supplydate if supplydate < admdate
-replace supplydate= sepdate - supplygap if supplygap < dayssupply & supplygap > 0 
+drop if supplygap >= dayssupply
+replace supplydate = sepdate - supplygap if supplygap < dayssupply & supplygap > 0
 drop supplygap
+bysort ppn admdate (supplydate) : gen nghost = _n
+ta nghost
 reshape wide supplydate dayssupply, i(ppn admdate) j(nghost)
 }
 *Step 2: Create enddates
@@ -1484,24 +1494,27 @@ texdoc stlog, cmdlog nodo
 
 use MI_drugs_class_6, clear
 drop if supplydate <= sepdate - 60
+drop if supplydate >= admdate & supplydate < sepdate
 merge m:1 pbs_item_code using PBS_packsizes
-keep if _merge==3
+keep if _merge == 3
 drop _merge
 replace packsize = 30 if packsize ==90
 replace packsize = 38 if packsize ==1 
 replace packsize = 28 if packsize == 56
 ta packsize
 br
-bysort ppn admdate (supplydate): gen nghost=_n
-ta nghost
 rename packsize dayssupply
 drop pbs_item_code
+count if supplydate < sepdate
 gen supplygap = 0
 replace supplygap = admdate - supplydate if supplydate < admdate
-replace supplydate= sepdate - supplygap if supplygap < dayssupply & supplygap > 0 
+drop if supplygap >= dayssupply
+replace supplydate = sepdate - supplygap if supplygap < dayssupply & supplygap > 0
 drop supplygap
+bysort ppn admdate (supplydate) : gen nghost = _n
+ta nghost
 reshape wide supplydate dayssupply, i(ppn admdate) j(nghost)
-}
+
 
 *Step 2: Create enddates
 {
@@ -1516,7 +1529,7 @@ count if study_days <90
 
 *Step 3: Adjust for when next supply overlaps with previous supply. 
 {
-forval i = 2/34 {
+forval i = 2/32 {
 local j = `i' - 1
 replace supplydate`i'= (supplydate`j' + dayssupply`j') if (supplydate`i' < (supplydate`j' + dayssupply`j') & supplydate`i' !=.)
 }
@@ -1526,7 +1539,7 @@ replace supplydate`i'= (supplydate`j' + dayssupply`j') if (supplydate`i' < (supp
 quietly {
 forval i = 1/365 {
 gen day`i' = 0
-forval j = 1/34 {
+forval j = 1/32 {
 replace day`i' = 1 if supplydate`j' <= sepdate + `i' & sepdate + `i' <= supplydate`j' + dayssupply`j' & supplydate`j' !=.
 }
 }
@@ -1555,20 +1568,23 @@ texdoc stlog, cmdlog nodo
 {
 use MI_drugs_class_7, clear
 drop if supplydate <= sepdate - 60
+drop if supplydate >= admdate & supplydate < sepdate
 merge m:1 pbs_item_code using PBS_packsizes
-keep if _merge==3
+keep if _merge == 3
 drop _merge
 replace packsize = 30 if packsize ==90
 replace packsize = 28 if packsize == 56
 ta packsize
-bysort ppn admdate (supplydate): gen nghost=_n
-ta nghost
 rename packsize dayssupply
 drop pbs_item_code
+count if supplydate < sepdate
 gen supplygap = 0
 replace supplygap = admdate - supplydate if supplydate < admdate
-replace supplydate= sepdate - supplygap if supplygap < dayssupply & supplygap > 0 
+drop if supplygap >= dayssupply
+replace supplydate = sepdate - supplygap if supplygap < dayssupply & supplygap > 0
 drop supplygap
+bysort ppn admdate (supplydate) : gen nghost = _n
+ta nghost
 reshape wide supplydate dayssupply, i(ppn admdate) j(nghost)
 }
 *Step 2: Create enddates
@@ -1583,7 +1599,7 @@ count if study_days <90
 }
 *Step 3: Adjust for when next supply overlaps with previous supply. 
 {
-forval i = 2/35 {
+forval i = 2/34 {
 local j = `i' - 1
 replace supplydate`i'= (supplydate`j' + dayssupply`j') if (supplydate`i' < (supplydate`j' + dayssupply`j') & supplydate`i' !=.)
 }
@@ -1593,7 +1609,7 @@ replace supplydate`i'= (supplydate`j' + dayssupply`j') if (supplydate`i' < (supp
 quietly {
 forval i = 1/365 {
 gen day`i' = 0
-forval j = 1/35 {
+forval j = 1/34 {
 replace day`i' = 1 if supplydate`j' <= sepdate + `i' & sepdate + `i' <= supplydate`j' + dayssupply`j' & supplydate`j' !=.
 }
 }
