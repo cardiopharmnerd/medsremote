@@ -265,7 +265,7 @@ bysort ppn (admdate sepdate sepmode) : gen sepmode_nest = sepmode[_n+1] if nghos
 replace sepmode = sepmode_nest if sepdate_nest > sepdate & sepdate_nest!=. & MI_primary == 1
 texdoc stlog close
 /***
-color{black}
+\color{black}
 This recode step ensures that statistical separations and transfers are recoded to actual non-death separations if this was the final outcome. The last step ensures if death occurred at any point throughout the separation, that the outcome is noted to be death. 
 \color{violet}
 ***/
